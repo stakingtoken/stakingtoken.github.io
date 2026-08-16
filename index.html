@@ -1,0 +1,1454 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" type="image/png"
+        href="https://raw.githubusercontent.com/stakingtoken/stakingtoken.github.io/refs/heads/main/images/bintang.png">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#0a0d16">
+    <meta name="description" content="Staking Token — Bintang (BTG) on RicheChain">
+    <title>Staking Token — Bintang (BTG) on RicheChain</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.15.0/dist/ethers.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #070910;
+            --bg2: #0b1020;
+            --card: rgba(14, 19, 34, .94);
+            --card2: #11182a;
+            --line: #252f45;
+            --text: #f4f6fc;
+            --muted: #8e99af;
+            --purple: #7957ff;
+            --purple2: #9a73ff;
+            --green: #24d3a0;
+            --red: #ff536b;
+            --yellow: #e0bd54;
+            --shadow: 0 16px 45px rgba(0, 0, 0, .26)
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(800px 420px at 8% -5%, #24164b 0, transparent 62%), radial-gradient(700px 430px at 100% 12%, #0d3034 0, transparent 62%), var(--bg);
+            color: var(--text);
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 14px
+        }
+
+        button,
+        input,
+        select {
+            font: inherit
+        }
+
+        .wrap {
+            width: min(1120px, calc(100% - 28px));
+            margin: auto
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(7, 9, 16, .9);
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            backdrop-filter: blur(16px)
+        }
+
+        .nav {
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            gap: 14px
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 205px
+        }
+
+        .brand-logo {
+            width: 37px;
+            height: 37px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #131a2a;
+            border: 1px solid var(--line)
+        }
+
+        .brand-title {
+            font-weight: 850;
+            font-size: 14px
+        }
+
+        .brand-sub {
+            font-size: 9px;
+            color: var(--muted);
+            margin-top: 1px
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            flex: 1;
+            overflow: auto
+        }
+
+        .nav-btn,
+        .tab {
+            border: 0;
+            background: transparent;
+            color: #9ca6b9;
+            padding: 8px 10px;
+            border-radius: 9px;
+            font-weight: 750;
+            cursor: pointer;
+            white-space: nowrap
+        }
+
+        .nav-btn:hover,
+        .tab:hover {
+            background: #11172a;
+            color: #fff
+        }
+
+        .connect {
+            min-width: 143px
+        }
+
+        .wallet {
+            padding: 9px 12px;
+            border-radius: 9px;
+            font-weight: 800;
+            color: #fff;
+            cursor: pointer
+        }
+
+        .wallet.red {
+            background: #35141d;
+            border: 1px solid #662638;
+            color: #ff8c9c
+        }
+
+        .wallet.green {
+            background: #102b25;
+            border: 1px solid #27614f;
+            color: #70dfbd
+        }
+
+        .wallet.yellow {
+            background: #302814;
+            border: 1px solid #665522;
+            color: #efd26f
+        }
+
+        main {
+            padding: 18px 0 55px
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            background: #0a0f1d;
+            box-shadow: var(--shadow)
+        }
+
+        .slides {
+            display: flex;
+            height: 350px;
+            transition: transform .48s ease
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 350px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 34px 42px;
+            background: linear-gradient(90deg, rgba(6, 8, 15, .96), rgba(6, 8, 15, .68) 46%, rgba(6, 8, 15, .18))
+        }
+
+        .slide-bg {
+            pointer-events: none;
+            position: absolute;
+            inset: 0;
+            background-position: center;
+            background-size: cover;
+            opacity: .62
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 2;
+            max-width: 570px
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #354058;
+            background: #0e1423c9;
+            border-radius: 999px;
+            padding: 5px 9px;
+            font-size: 10px;
+            color: #c8cede
+        }
+
+        .eyebrow i {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green)
+        }
+
+        h1 {
+            font-size: clamp(34px, 4.6vw, 56px);
+            line-height: .98;
+            letter-spacing: -2px;
+            margin: 13px 0 10px
+        }
+
+        .slide p {
+            max-width: 520px;
+            color: #b6bfd1;
+            line-height: 1.55;
+            font-size: 14px;
+            margin: 0
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 17px;
+            flex-wrap: wrap
+        }
+
+        .hero-dots {
+            position: absolute;
+            z-index: 4;
+            left: 42px;
+            bottom: 15px;
+            display: flex;
+            gap: 5px
+        }
+
+        .hero-dots button {
+            width: 24px;
+            height: 3px;
+            padding: 0;
+            border: 0;
+            border-radius: 9px;
+            background: #758198;
+            opacity: .5
+        }
+
+        .hero-dots button.active {
+            background: #fff;
+            opacity: 1
+        }
+
+        .hero-arrow {
+            position: absolute;
+            z-index: 4;
+            right: 13px;
+            bottom: 8px;
+            display: flex;
+            gap: 5px
+        }
+
+        .hero-arrow button {
+            width: 32px;
+            height: 32px;
+            padding: 0
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 9px;
+            margin-top: 10px
+        }
+
+        .stat {
+            padding: 13px 14px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: var(--card)
+        }
+
+        .stat label {
+            font-size: 9px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .45px
+        }
+
+        .stat strong {
+            display: block;
+            margin-top: 5px;
+            font-size: 17px
+        }
+
+        .tabs {
+            display: flex;
+            gap: 3px;
+            margin: 17px 0 10px;
+            padding: 4px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: #0b101c;
+            overflow: auto
+        }
+
+        .tab.active {
+            color: #eee8ff;
+            background: #1a1530;
+            box-shadow: inset 0 0 0 1px #3d316a
+        }
+
+        .section {
+            display: none
+        }
+
+        .section.active {
+            display: block
+        }
+
+        .cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px
+        }
+
+        .panel {
+            padding: 16px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--card);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .15)
+        }
+
+        .panel h2 {
+            font-size: 16px;
+            margin: 0 0 11px
+        }
+
+        .kv {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(145px, 42%);
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #1c2536;
+            color: #aeb8ca;
+            font-size: 12px
+        }
+
+        .kv:last-child {
+            border-bottom: 0
+        }
+
+        .kv span:last-child {
+            text-align: right;
+            color: #f0f3f9;
+            max-width: none;
+            overflow-wrap: normal;
+            white-space: normal
+        }
+
+        .small {
+            font-size: 11px
+        }
+
+        .muted {
+            color: var(--muted) !important
+        }
+
+        .notice {
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #0b101a;
+            border: 1px solid #253047;
+            color: #aeb8ca;
+            font-size: 12px;
+            line-height: 1.55
+        }
+
+        .notice.warn {
+            border-color: #554720;
+            color: #e4d28c
+        }
+
+        .notice.danger {
+            border-color: #60283a;
+            color: #ffadb9
+        }
+
+        .actions {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap
+        }
+
+        .form {
+            display: grid;
+            gap: 8px
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px
+        }
+
+        .label {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            margin-bottom: 4px
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px 11px;
+            background: #090d16;
+            color: #fff;
+            border: 1px solid #273149;
+            border-radius: 8px;
+            outline: none
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #624cc0;
+            box-shadow: 0 0 0 2px #7957ff18
+        }
+
+        button,
+        .btn {
+            border: 1px solid var(--line);
+            background: #151b2a;
+            color: #f2f4f9;
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-weight: 750;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .primary {
+            border: 0 !important;
+            background: linear-gradient(135deg, var(--purple), #6644e7) !important
+        }
+
+        .success {
+            border: 0 !important;
+            background: linear-gradient(135deg, #159776, #20b58f) !important
+        }
+
+        .danger {
+            background: #32151e !important;
+            border-color: #5c2636 !important;
+            color: #ff9aaa !important
+        }
+
+        .progress {
+            height: 6px;
+            border-radius: 9px;
+            overflow: hidden;
+            background: #1b2232;
+            margin-top: 8px
+        }
+
+        .progress i {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--purple), var(--green));
+            transition: width .35s
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 10px
+        }
+
+        .step {
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: #0b101a;
+            font-size: 11px;
+            line-height: 1.5
+        }
+
+        .step b {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 12px
+        }
+
+        .faq {
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: #0b101a;
+            margin: 6px 0;
+            overflow: hidden
+        }
+
+        .faq summary {
+            cursor: pointer;
+            padding: 11px 12px;
+            font-size: 12px;
+            font-weight: 750;
+            list-style: none
+        }
+
+        .faq summary::-webkit-details-marker {
+            display: none
+        }
+
+        .faq div {
+            padding: 0 12px 11px;
+            color: #aeb8ca;
+            font-size: 11px;
+            line-height: 1.6
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 9px;
+            margin-top: 20px
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 7px
+        }
+
+        .footer-links a {
+            color: #b9b0ff;
+            text-decoration: none;
+            font-weight: 750
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline
+        }
+
+        .footer-note {
+            opacity: .8
+        }
+
+        .toast {
+            position: fixed;
+            right: 14px;
+            bottom: 14px;
+            z-index: 100;
+            max-width: 360px;
+            padding: 11px 13px;
+            border-radius: 10px;
+            background: #121a29;
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow);
+            font-size: 12px;
+            display: none
+        }
+
+        .toast.show {
+            display: block
+        }
+
+        .toast.error {
+            border-color: #692a3b
+        }
+
+        .toast.ok {
+            border-color: #28614e
+        }
+
+        @media(max-width:900px) {
+            .nav {
+                flex-wrap: wrap;
+                padding: 8px 0
+            }
+
+            .brand {
+                min-width: 0
+            }
+
+            .connect {
+                margin-left: auto
+            }
+
+            .nav nav {
+                order: 3;
+                width: 100%;
+                justify-content: flex-start
+            }
+
+            .cols {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:600px) {
+            .wrap {
+                width: calc(100% - 14px)
+            }
+
+            main {
+                padding-top: 9px
+            }
+
+            .nav {
+                gap: 8px
+            }
+
+            .brand-logo {
+                width: 34px;
+                height: 34px
+            }
+
+            .brand-title {
+                font-size: 13px
+            }
+
+            .brand-sub {
+                font-size: 8px
+            }
+
+            .connect {
+                min-width: 0;
+                padding: 8px 10px;
+                font-size: 11px
+            }
+
+            .hero {
+                border-radius: 15px
+            }
+
+            .slides,
+            .slide {
+                height: 380px
+            }
+
+            .slide {
+                padding: 22px 17px 49px;
+                align-items: flex-end;
+                background: linear-gradient(0deg, rgba(6, 8, 15, .98), rgba(6, 8, 15, .56) 68%, rgba(6, 8, 15, .15))
+            }
+
+            .slide-content {
+                width: 100%
+            }
+
+            h1 {
+                font-size: 38px;
+                letter-spacing: -1.4px
+            }
+
+            .slide p {
+                font-size: 12px;
+                line-height: 1.5
+            }
+
+            .hero-actions {
+                margin-top: 13px
+            }
+
+            .hero-actions button {
+                padding: 8px 10px;
+                font-size: 11px
+            }
+
+            .hero-dots {
+                left: 17px;
+                bottom: 13px
+            }
+
+            .hero-arrow {
+                right: 11px
+            }
+
+            .hero-arrow button {
+                width: 29px;
+                height: 29px
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px
+            }
+
+            .stat {
+                padding: 10px 11px
+            }
+
+            .stat strong {
+                font-size: 14px
+            }
+
+            .tabs {
+                margin-top: 11px
+            }
+
+            .tab {
+                font-size: 11px;
+                padding: 8px 9px
+            }
+
+            .panel {
+                padding: 13px;
+                border-radius: 12px
+            }
+
+            .steps {
+                grid-template-columns: 1fr
+            }
+
+            .kv {
+                grid-template-columns: minmax(0, 1fr) minmax(118px, 45%);
+                font-size: 11px
+            }
+
+            .kv span:last-child {
+                white-space: normal
+            }
+
+            .actions button,
+            .actions .btn {
+                flex: 1;
+                min-width: 120px
+            }
+
+            .row {
+                grid-template-columns: 1fr
+            }
+
+            .footer {
+                padding-bottom: 12px
+            }
+
+            .footer-links {
+                gap: 10px 13px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="wrap nav">
+            <div class="brand"><img class="brand-logo"
+                    src="https://raw.githubusercontent.com/stakingtoken/stakingtoken.github.io/refs/heads/main/images/btg.png"
+                    alt="StakingToken">
+                <div>
+                    <div class="brand-title">Staking Token</div>
+                    <div class="brand-sub">Bintang (BTG) on RicheChain</div>
+                </div>
+            </div>
+            <nav>
+                <button class="tab" data-tab="dashboard">Dashboard</button>
+                <button class="tab" data-tab="stake">Stake</button>
+                <button id="ownerTab" class="tab" data-tab="owner" style="display:none">Owner</button>
+                <button id="connectBtn" class="wallet red connect">Connect Wallet</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <section class="hero">
+            <div class="slides" id="slides">
+                <article class="slide">
+                    <div class="slide-bg"
+                        style="background-image:url('https://raw.githubusercontent.com/stakingtoken/stakingtoken.github.io/refs/heads/main/images/stake-btg-earn-daily-roi.webp')">
+                    </div>
+                    <div class="slide-content"><span class="eyebrow"><i></i> RicheChain • BTG</span>
+                        <h1>Stake BTG.</h1>
+                        <p>Stake BTG, monitor your position and claim eligible rewards directly from your wallet. RIC is
+                            used for network gas.</p>
+                        <div class="hero-actions"><button class="primary" data-tab="stake">Start Staking</button><button
+                                data-tab="guide">How It Works</button></div>
+                    </div>
+                </article>
+                <article class="slide">
+                    <div class="slide-bg"
+                        style="background-image:url('https://raw.githubusercontent.com/stakingtoken/stakingtoken.github.io/refs/heads/main/images/stake-more-earn-more.webp')">
+                    </div>
+                    <div class="slide-content"><span class="eyebrow"><i></i> StakingToken</span>
+                        <h1>Build Your Network.</h1>
+                        <p>Use your referral link and monitor your sponsor position from one dashboard.</p>
+                        <div class="hero-actions"><button class="primary" data-tab="network">Referral Center</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="slide">
+                    <div class="slide-bg"
+                        style="background-image:url('https://raw.githubusercontent.com/stakingtoken/stakingtoken.github.io/refs/heads/main/images/secure-today-prosper-tomorrow.webp')">
+                    </div>
+                    <div class="slide-content"><span class="eyebrow"><i></i> Simple Web3 Access</span>
+                        <h1>Connect. Stake. Claim.</h1>
+                        <p>No seed phrase and no private key. Transactions are signed by your wallet.</p>
+                        <div class="hero-actions"><button class="primary" id="heroConnect">Connect Wallet</button></div>
+                    </div>
+                </article>
+            </div>
+            <div class="hero-dots" id="heroDots"><button class="active"></button><button></button><button></button>
+            </div>
+            <div class="hero-arrow"><button id="prevSlide">‹</button><button id="nextSlide">›</button></div>
+        </section>
+        <div class="stats">
+            <div class="stat"><label>BTG Balance</label><strong id="balance">—</strong></div>
+            <div class="stat"><label>Total Staked</label><strong id="staked">—</strong></div>
+            <div class="stat"><label>Pending ROI</label><strong id="pending">—</strong></div>
+            <div class="stat"><label>Pending Sponsor Bonus</label><strong id="sponsor">—</strong></div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="dashboard">My Dashboard</button>
+            <button class="tab" data-tab="stake">Stake / Top Up</button>
+            <button class="tab" data-tab="network">Referral</button><button class="tab" data-tab="guide">Guide &
+                FAQ</button>
+            <button id="ownerTab2" class="tab" data-tab="owner" style="display:none">Owner Panel</button>
+        </div>
+
+        <section id="dashboard" class="section active">
+            <div class="cols">
+                <div class="panel">
+                    <h2>Position</h2>
+                    <div class="kv"><span>Total Staked</span><span id="dStaked">—</span></div>
+                    <div class="kv"><span>Max Cap</span><span id="dCap">—</span></div>
+                    <div class="kv"><span>Total Claimed</span><span id="dClaimed">—</span></div>
+                    <div class="kv"><span>ROI Pending</span><span id="dPending">—</span></div>
+                    <div class="kv"><span>Sponsor Bonus Pending</span><span id="dSponsor">—</span></div>
+                    <div class="kv"><span>Upline</span><span id="dUpline">—</span></div>
+                    <div class="kv"><span>Leader</span><span id="dLeader">—</span></div>
+                    <div class="progress"><i id="capProgress"></i></div>
+                    <div class="small muted" style="margin-top:7px" id="capText">—</div>
+                </div>
+                <div class="panel">
+                    <h2>Claims</h2>
+                    <div class="notice">ROI is calculated by the smart contract from elapsed time. The displayed live
+                        amount is an estimate; the contract remains the source of truth.</div>
+                    <div style="height:12px"></div>
+                    <div class="actions">
+                        <button class="success" id="claimRoiBtn">Claim ROI</button>
+                        <button id="claimSponsorBtn">Claim Sponsor Bonus</button>
+                    </div>
+                    <div style="height:14px"></div>
+                    <div class="kv"><span>Daily ROI</span><span id="dailyRoi">—</span></div>
+                    <div class="kv"><span>Leader Bonus</span><span id="leaderBonus">—</span></div>
+                    <div class="kv"><span>Min Stake</span><span id="minStake">—</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="stake" class="section">
+            <div class="cols">
+                <div class="panel">
+                    <h2>Stake BTG</h2>
+                    <div class="notice warn">You need BTG for staking and RIC for gas. On the first stake, an optional
+                        sponsor/upline can be recorded permanently.</div>
+                    <div style="height:14px"></div>
+                    <div class="form">
+                        <div><label class="label">Amount BTG</label><input id="stakeAmount" inputmode="decimal"
+                                placeholder="0.0"></div>
+                        <div><label class="label">Sponsor / Upline address (first stake only)</label><input id="upline"
+                                placeholder="0x..."></div>
+                        <div class="actions">
+                            <button id="approveBtn">Approve BTG</button>
+                            <button class="primary" id="stakeBtn">Stake</button>
+                            <button id="maxBtn">Max</button>
+                        </div>
+                        <div class="small muted" id="allowanceText">Allowance: —</div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h2>How it works</h2>
+                    <div class="kv"><span>Asset</span><span>BTG ERC-20</span></div>
+                    <div class="kv"><span>Gas</span><span>RIC native</span></div>
+                    <div class="kv"><span>Max cap</span><span>200% of total amount</span></div>
+                    <div class="kv"><span>Claim</span><span>ROI + network distribution</span></div>
+                    <div class="notice" style="margin-top:14px">The DApp never asks for a seed phrase or private key.
+                        All transactions are signed by the connected wallet.</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="network" class="section">
+            <div class="cols">
+                <div class="panel">
+                    <h2>Referral Center</h2>
+                    <div class="kv"><span>Your address</span><span id="myAddress">—</span></div>
+                    <div class="kv"><span>Your upline</span><span id="nUpline">—</span></div>
+                    <div class="kv"><span>Leader status</span><span id="nLeader">—</span></div><button id="copyReferral"
+                        style="margin-top:12px">Copy Referral Link</button>
+                    <div class="small muted" style="margin-top:9px">The link pre-fills your address as the suggested
+                        upline. The contract remains the final authority.</div>
+                </div>
+                <div class="panel">
+                    <h2>Matching Bonus</h2>
+                    <div id="levels">Connect wallet to read current levels.</div>
+                </div>
+            </div>
+        </section>
+        <section id="guide" class="section">
+            <div class="panel">
+                <h2>How to Use StakingToken</h2>
+                <div class="steps">
+                    <div class="step"><b>01 — Connect</b><span class="muted">Connect an EVM wallet. If the wallet is on
+                            another chain, switch to RicheChain.</span></div>
+                    <div class="step"><b>02 — Approve</b><span class="muted">Approve the StakingToken contract to spend
+                            the BTG amount you intend to stake.</span></div>
+                    <div class="step"><b>03 — Stake</b><span class="muted">Enter BTG and optionally an upline on your
+                            first stake. Keep RIC for gas.</span></div>
+                </div>
+                <details class="faq" open>
+                    <summary>Why do I need RIC?</summary>
+                    <div>RIC is RicheChain's native gas currency. BTG is the ERC-20 asset being staked. RIC is not your
+                        staking amount.</div>
+                </details>
+                <details class="faq">
+                    <summary>Why do I need to approve BTG?</summary>
+                    <div>BTG is an ERC-20 token. Approval permits the StakingToken contract to transfer the selected
+                        amount when you stake.</div>
+                </details>
+                <details class="faq">
+                    <summary>Why is the wallet button red?</summary>
+                    <div>Red means the wallet is disconnected or on the wrong chain. Green means the wallet is connected
+                        to RicheChain. Click the button when a switch is required.</div>
+                </details>
+                <details class="faq">
+                    <summary>What is the 200% max cap?</summary>
+                    <div>The dashboard reads the cap and claimed amount from the StakingToken contract. On-chain rules
+                        determine the actual claimable amount.</div>
+                </details>
+                <details class="faq">
+                    <summary>How does the upline work?</summary>
+                    <div>The upline is recorded by the contract when its conditions allow registration. Use an address
+                        you trust and verify it before signing.</div>
+                </details>
+                <details class="faq">
+                    <summary>Can the live ROI number change?</summary>
+                    <div>Yes. The displayed live value is an estimate between blockchain reads. The smart contract is
+                        always the source of truth for a transaction.</div>
+                </details>
+                <details class="faq">
+                    <summary>What if a transaction fails?</summary>
+                    <div>Check RicheChain, RIC gas balance, BTG balance and allowance. A reverted transaction does not
+                        change the blockchain state.</div>
+                </details>
+                <details class="faq">
+                    <summary>Does the DApp need my seed phrase?</summary>
+                    <div>No. Never enter a seed phrase or private key into a website. Transactions are signed by your
+                        wallet.</div>
+                </details>
+                <div class="notice warn">Always verify the StakingToken contract address and transaction details in your
+                    wallet before signing.</div>
+            </div>
+        </section>
+        <section id="owner" class="section">
+            <div class="notice danger" id="ownerWarning">Owner functions change contract state or move assets. Verify
+                every value before signing.</div>
+            <div style="height:14px"></div>
+            <div class="cols">
+                <div class="panel">
+                    <h2>Contract Settings</h2>
+                    <div class="form">
+                        <div><label class="label">Minimum stake (BTG)</label><input id="oMinStake" inputmode="decimal">
+                        </div>
+                        <button id="setMinStake">Update Minimum Stake</button>
+                        <div><label class="label">Daily ROI (BPS; 100 = 1%)</label><input id="oRoi" inputmode="numeric">
+                        </div>
+                        <button id="setRoi">Update Daily ROI</button>
+                        <div><label class="label">Leader Bonus (BPS; 500 = 5%)</label><input id="oLeaderBps"
+                                inputmode="numeric"></div>
+                        <button id="setLeaderBps">Update Leader Bonus</button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h2>15-Level Matching</h2>
+                    <div id="levelInputs" class="form"></div>
+                    <button id="setLevels" style="margin-top:12px">Update All 15 Levels</button>
+                </div>
+            </div>
+            <div class="cols" style="margin-top:18px">
+                <div class="panel">
+                    <h2>Leader Management</h2>
+                    <div class="form">
+                        <input id="leaderAddress" placeholder="Leader wallet 0x...">
+                        <select id="leaderStatus">
+                            <option value="true">Register / Enable</option>
+                            <option value="false">Revoke / Disable</option>
+                        </select>
+                        <button id="setLeader" class="primary">Update Leader</button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h2>Admin Stake</h2>
+                    <div class="form">
+                        <input id="adminUser" placeholder="User wallet 0x...">
+                        <input id="adminAmount" inputmode="decimal" placeholder="Simulated BTG amount">
+                        <input id="adminUpline" placeholder="Optional upline 0x...">
+                        <button id="adminStake" class="primary">Admin Stake</button>
+                        <div class="notice danger small">This function changes a user's stake accounting without
+                            transferring BTG into the contract. Use only if this behavior is intentional in your
+                            deployment.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel" style="margin-top:18px">
+                <h2>Recover ERC-20</h2>
+                <div class="form">
+                    <div class="row"><input id="recoverToken" placeholder="ERC-20 token address"><input
+                            id="recoverAmount" inputmode="decimal" placeholder="Token amount"></div>
+                    <button id="recoverBtn" class="danger">Recover ERC-20 to Owner</button>
+                    <div class="notice danger small">This mirrors the deployed contract's owner-only recoverERC20
+                        function. Do not use it to withdraw liabilities unless you have independently verified solvency
+                        and intent.</div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="https://stakingtoken.github.io/buy/" data-config-link="buy" target="_blank"
+                    rel="noopener noreferrer">Buy
+                    $BTG</a>
+                <a href="https://dex.cryptoreceh.com/riche?inputCurrency=ric&outputCurrency=0x2c0d22544a8f6551e695426da5d58fbf95864ae5"
+                    data-config-link="trade" target="_blank" rel="noopener noreferrer">Trade
+                    $BTG</a>
+                <a href="https://stakingtoken.github.io/terms/" data-config-link="terms" target="_blank"
+                    rel="noopener noreferrer">Terms</a>
+                <a href="https://stakingtoken.github.io/guide/" data-tab="guide">Guide</a>
+            </div>
+            <div class="footer-note">Staking Token • RicheChain • BTG staking</div>
+        </footer>
+    </main>
+    <div id="toast" class="toast"></div>
+
+    <script>
+        (() => {
+            'use strict';
+
+            const CONFIG = {
+                chainId: 132026,
+                chainHex: '0x203BA',
+                chainName: 'RicheChain',
+                rpc: 'https://seed-richechain.com/',
+                ws: 'wss://seed-richechain.com:8586/',
+                nativeSymbol: 'RIC',
+                explorer: 'https://richescan.com/',
+                stakingTokenAddress: '0x2c0D22544a8f6551e695426DA5d58Fbf95864ae5',
+                stakingContract: '0x77eFDb2953B9B81B70d21146B60fCaf807b41FEf',
+                expectedToken: '0x2c0D22544a8f6551e695426DA5d58Fbf95864ae5',
+                expectedSymbol: 'BTG',
+            };
+
+            const ERC20_ABI = [
+                'function name() view returns (string)',
+                'function symbol() view returns (string)',
+                'function decimals() view returns (uint8)',
+                'function balanceOf(address) view returns (uint256)',
+                'function allowance(address,address) view returns (uint256)',
+                'function approve(address,uint256) returns (bool)'
+            ];
+
+            const GT_ABI = [
+                'function owner() view returns (address)',
+                'function stakingToken() view returns (address)',
+                'function minStake() view returns (uint256)',
+                'function leaderBonusBps() view returns (uint256)',
+                'function dailyRoiBps() view returns (uint256)',
+                'function sponsorBonusLevels(uint256) view returns (uint256)',
+                'function userStakes(address) view returns (uint256 totalAmount,uint256 maxCap,uint256 totalClaimed,uint256 savedReward,uint256 lastClaimTime,uint256 pendingSponsorBonus)',
+                'function userUplines(address) view returns (address)',
+                'function isLeader(address) view returns (bool)',
+                'function pendingReward(address) view returns (uint256)',
+                'function isMaxCapReached(address) view returns (bool)',
+                'function getStakeInfo(address) view returns (uint256 totalAmount,uint256 maxCap,uint256 totalClaimed,uint256 currentPendingReward,uint256 pendingSponsorBonus)',
+                'function stake(uint256,address)',
+                'function claimRoi()',
+                'function claimSponsorBonus()',
+                'function adminStake(address,uint256,address)',
+                'function setLeader(address,bool)',
+                'function updateLeaderBonusBps(uint256)',
+                'function updateDailyRoiBps(uint256)',
+                'function updateSponsorLevels(uint256[])',
+                'function updateMinStake(uint256)',
+                'function recoverERC20(address,uint256)',
+                'event UplineRegistered(address indexed user,address indexed upline)',
+                'event Staked(address indexed user,uint256 amount)',
+                'event AdminStaked(address indexed user,uint256 amount,address indexed admin)',
+                'event RoiClaimed(address indexed user,uint256 reward)',
+                'event SponsorBonusClaimed(address indexed user,uint256 amount)',
+                'event MatchingBonusDistributed(address indexed fromUser,uint256 roiAmount,uint256 totalDistributed)',
+                'event LeaderBonusPaid(address indexed leader,address indexed fromUser,uint256 amount)',
+                'event MinStakeUpdated(uint256 oldMin,uint256 newMin)',
+                'event LeaderStatusUpdated(address indexed wallet,bool status)',
+                'event LeaderBonusBpsUpdated(uint256 oldBps,uint256 newBps)',
+                'event DailyRoiBpsUpdated(uint256 oldBps,uint256 newBps)'
+            ];
+
+            let browserProvider = null, signer = null, readProvider = null, gt = null, token = null;
+            let account = null, tokenDecimals = 18, tokenSymbol = 'BTG', refreshTimer = null, liveTimer = null;
+            let cached = { total: 0n, cap: 0n, claimed: 0n, pending: 0n, sponsor: 0n, lastClaim: 0n, dailyBps: 100n };
+
+            const $ = id => document.getElementById(id);
+            const configured = () => /^0x[0-9a-fA-F]{40}$/.test(CONFIG.stakingContract);
+            const short = a => a ? `${a.slice(0, 6)}…${a.slice(-4)}` : '—';
+            function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[c])); }
+            function fmt(v, max = 4) { try { return ethers.formatUnits(v, tokenDecimals).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1').split('.')[0] + (ethers.formatUnits(v, tokenDecimals).includes('.') ? '.' + ethers.formatUnits(v, tokenDecimals).split('.')[1].slice(0, max).replace(/0+$/, '') : '') } catch { return '0' } }
+            function fmtBps(b) { return `${Number(b) / 100}%`; }
+            function requireContract() {
+                if (!configured()) {
+                    toast('StakingToken contract address is not configured yet. Add the deployed contract address before using blockchain actions.', 'error');
+                    return false;
+                }
+                return true;
+            }
+            function checkFooterLinks() {
+                document.querySelectorAll('[data-config-link]').forEach(a => a.addEventListener('click', e => {
+                    if (a.getAttribute('href')?.startsWith('PASTE_')) { e.preventDefault(); toast(`Set the ${a.dataset.configLink} footer URL before launch.`, 'error'); }
+                }));
+            }
+            function toast(msg, type = '') { const t = $('toast'); t.textContent = msg; t.className = `toast show ${type}`; clearTimeout(t._t); t._t = setTimeout(() => t.className = 'toast', 4500); }
+            function explorerTx(hash) { return `${CONFIG.explorer.replace(/\/$/, '')}/tx/${hash}`; }
+            function explorerAddress(addr) { return `${CONFIG.explorer.replace(/\/$/, '')}/address/${addr}`; }
+            function validAddress(v) { return /^0x[0-9a-fA-F]{40}$/.test(v); }
+            function ensureConfig() { if (!configured()) { toast('Set CONFIG.stakingContract to the deployed StakingToken contract address first.', 'error'); return false } return true; }
+            function parseAmount(v) { return ethers.parseUnits((v || '0').trim(), tokenDecimals); }
+            async function waitTx(tx, label = 'Transaction') { toast(`${label} submitted…`); const r = await tx.wait(); toast(`${label} confirmed: ${short(r.hash)}`, 'ok'); return r; }
+
+            async function init() {
+                try {
+                    readProvider = new ethers.JsonRpcProvider(CONFIG.rpc, { name: CONFIG.chainName, chainId: CONFIG.chainId });
+                    buildLevelInputs();
+                    const on = (id, event, fn) => { const el = $(id); if (el) el.addEventListener(event, fn) };
+                    on('connectBtn', 'click', async () => { if (account) { disconnectUI(); toast('Wallet disconnected from this DApp. Connect again when needed.', 'ok') } else await connect() });
+                    document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+                    on('approveBtn', 'click', approve);
+                    on('stakeBtn', 'click', stake);
+                    on('maxBtn', 'click', maxAmount);
+                    on('claimRoiBtn', 'click', claimRoi);
+                    on('claimSponsorBtn', 'click', claimSponsor);
+                    on('copyReferral', 'click', copyReferral);
+                    on('setMinStake', 'click', updateMinStake);
+                    on('setRoi', 'click', updateRoi);
+                    on('setLeaderBps', 'click', updateLeaderBps);
+                    on('setLeader', 'click', setLeader);
+                    on('setLevels', 'click', setLevels);
+                    on('adminStake', 'click', adminStake);
+                    on('recoverBtn', 'click', recoverERC20);
+                    if (window.ethereum) {
+                        window.ethereum.on?.('accountsChanged', async a => { account = a?.[0] || null; if (account) await bindWallet(); else disconnectUI(); });
+                        window.ethereum.on?.('chainChanged', async () => { await refreshWalletState(); if (account) await bindWallet() });
+                    }
+                    await loadPublic();
+                    setupHero(); checkFooterLinks(); await refreshWalletState(); if (configured()) startPolling();
+                } catch (e) { console.error(e); toast('DApp initialization error: ' + (e?.message || e), 'error') }
+            }
+            function setupHero() {
+                let i = 0;
+                const sl = $('slides'), ds = [...document.querySelectorAll('#heroDots button')];
+                if (!sl) return;
+                const go = n => { i = (n + 3) % 3; sl.style.transform = `translateX(-${i * 100}%)`; ds.forEach((d, j) => d.classList.toggle('active', i === j)) };
+                const prev = $('prevSlide'), next = $('nextSlide'), hc = $('heroConnect');
+                if (prev) prev.addEventListener('click', () => go(i - 1));
+                if (next) next.addEventListener('click', () => go(i + 1));
+                ds.forEach((d, j) => d.addEventListener('click', () => go(j)));
+                if (hc) hc.addEventListener('click', connect);
+                setInterval(() => go(i + 1), 7000);
+            }
+            async function loadPublic() {
+                try {
+                    if (!configured()) { return; }
+                    const code = await readProvider.getCode(CONFIG.stakingContract);
+                    if (code === '0x') { toast('StakingToken contract not found on the configured RicheChain RPC.', 'error'); return; }
+                    const taddr = await new ethers.Contract(CONFIG.stakingContract, GT_ABI, readProvider).stakingToken();
+                    if (taddr.toLowerCase() !== CONFIG.expectedToken.toLowerCase()) {
+                        toast('StakingToken contract points to a different staking token than the configured BTG address.', 'error'); return;
+                    }
+                    token = new ethers.Contract(CONFIG.expectedToken, ERC20_ABI, readProvider);
+                    tokenDecimals = Number(await token.decimals()); tokenSymbol = await token.symbol();
+                    if (tokenSymbol.toUpperCase() !== CONFIG.expectedSymbol) {
+                        toast(`Configured BTG token returned symbol ${tokenSymbol}. Verify the token contract before launch.`, 'error'); return;
+                    }
+                    await refresh();
+                } catch (e) { console.error(e); toast(cleanError(e), 'error'); }
+            }
+            async function connect() {
+                if (!window.ethereum) { toast('No EVM wallet detected. Open this DApp in a wallet browser or install MetaMask/another EVM wallet.', 'error'); return; }
+                try {
+                    browserProvider = new ethers.BrowserProvider(window.ethereum, 'any');
+                    const net = await browserProvider.getNetwork();
+                    if (Number(net.chainId) !== CONFIG.chainId) { setWalletState('red', 'Switch to RicheChain'); await addNetwork(); return; }
+                    await browserProvider.send('eth_requestAccounts', []);
+                    await bindWallet();
+                } catch (e) { toast(cleanError(e), 'error'); }
+            }
+            async function addNetwork() {
+                if (!window.ethereum) return;
+                try {
+                    setWalletState('yellow', 'Switching…'); await window.ethereum.request({
+                        method: 'wallet_addEthereumChain', params: [{
+                            chainId: CONFIG.chainHex, chainName: CONFIG.chainName,
+                            nativeCurrency: { name: 'RicheChain', symbol: 'RIC', decimals: 18 },
+                            rpcUrls: [CONFIG.rpc], blockExplorerUrls: [CONFIG.explorer]
+                        }]
+                    });
+                    await connect();
+                } catch (e) { toast(cleanError(e), 'error'); }
+            }
+            async function bindWallet() {
+                browserProvider = new ethers.BrowserProvider(window.ethereum, 'any');
+                signer = await browserProvider.getSigner(); account = await signer.getAddress();
+                if (!ensureConfig()) return;
+                gt = new ethers.Contract(CONFIG.stakingContract, GT_ABI, signer);
+                const taddr = await gt.stakingToken();
+                if (taddr.toLowerCase() !== CONFIG.expectedToken.toLowerCase()) throw Error('StakingToken contract is configured for a different token address.');
+                token = new ethers.Contract(CONFIG.expectedToken, ERC20_ABI, signer);
+                tokenDecimals = Number(await token.decimals()); tokenSymbol = await token.symbol();
+                if (tokenSymbol.toUpperCase() !== CONFIG.expectedSymbol) throw Error(`Configured BTG token returned symbol ${tokenSymbol}.`);
+                setWalletState('green', short(account));
+                $('myAddress').textContent = short(account);
+                $('myAddress').title = account;
+                const owner = await gt.owner();
+                const isOwner = owner.toLowerCase() === account.toLowerCase();
+
+                if ($('ownerTab2')) $('ownerTab2').style.display = isOwner ? 'inline-block' : 'none'; if ($('ownerTab')) $('ownerTab').style.display = isOwner ? 'inline-block' : 'none';
+                $('ownerWarning').textContent = isOwner ? 'Connected wallet is contract owner. Owner functions are enabled.' : 'Owner panel is restricted to the contract owner.';
+                if (isOwner) showTab('owner');
+                await refresh();
+                startPolling();
+            }
+            function setWalletState(state, text) { const b = $('connectBtn'); b.className = 'wallet connect ' + state; b.textContent = text }
+            async function refreshWalletState() { if (!window.ethereum) { setWalletState('red', 'Connect Wallet'); return } try { const a = await window.ethereum.request({ method: 'eth_accounts' }); if (!a.length) { setWalletState('red', 'Connect Wallet'); return } const c = await window.ethereum.request({ method: 'eth_chainId' }); if (Number(BigInt(c)) !== CONFIG.chainId) { setWalletState('red', 'Switch to RicheChain'); return } setWalletState('green', short(a[0])) } catch { setWalletState('red', 'Connect Wallet') } }
+            function disconnectUI() { account = null; signer = null; gt = null; token = null; setWalletState('red', 'Connect Wallet'); if ($('ownerTab2')) $('ownerTab2').style.display = 'none'; if ($('ownerTab')) $('ownerTab').style.display = 'none' }
+            function startPolling() { clearInterval(refreshTimer); refreshTimer = setInterval(() => refresh().catch(console.error), 15000); clearInterval(liveTimer); liveTimer = setInterval(livePending, 1000); }
+            async function refresh() {
+                if (!configured()) return;
+                const reader = gt || new ethers.Contract(CONFIG.stakingContract, GT_ABI, readProvider);
+                try {
+                    const [min, roi, lb] = await Promise.all([reader.minStake(), reader.dailyRoiBps(), reader.leaderBonusBps()]);
+                    $('minStake').textContent = `${fmt(min)} ${tokenSymbol}`; $('dailyRoi').textContent = fmtBps(roi); $('leaderBonus').textContent = fmtBps(lb);
+                    cached.dailyBps = BigInt(roi);
+                    const levels = await Promise.all([...Array(15)].map((_, i) => reader.sponsorBonusLevels(i).catch(() => 0n)));
+                    renderLevels(levels);
+                    if (account) {
+                        const [info, up, leader, bal, allow] = await Promise.all([
+                            reader.getStakeInfo(account), reader.userUplines(account), reader.isLeader(account),
+                            token.balanceOf(account), token.allowance(account, CONFIG.stakingContract)
+                        ]);
+                        cached.total = info[0]; cached.cap = info[1]; cached.claimed = info[2]; cached.pending = info[3]; cached.sponsor = info[4];
+                        const raw = await reader.userStakes(account);
+                        cached.lastClaim = raw[4];
+                        renderUser(info, up, leader, bal, allow);
+                    } else {
+                        $('balance').textContent = '—'; $('staked').textContent = '—'; $('pending').textContent = '—'; $('sponsor').textContent = '—';
+                    }
+                    if (account && signer) {
+                        try {
+                            const owner = await reader.owner();
+                            const isOwner = owner.toLowerCase() === account.toLowerCase();
+                            if (isOwner) fillOwner(levels, min, roi, lb);
+                        } catch { }
+                    }
+                } catch (e) { console.error('refresh', e); }
+            }
+            function renderUser(info, up, leader, bal, allow) {
+                $('balance').textContent = `${fmt(bal)} ${tokenSymbol}`;
+                $('staked').textContent = `${fmt(info[0])} ${tokenSymbol}`;
+                $('pending').textContent = `${fmt(info[3])} ${tokenSymbol}`;
+                $('sponsor').textContent = `${fmt(info[4])} ${tokenSymbol}`;
+                $('dStaked').textContent = `${fmt(info[0])} ${tokenSymbol}`;
+                $('dCap').textContent = `${fmt(info[1])} ${tokenSymbol}`;
+                $('dClaimed').textContent = `${fmt(info[2])} ${tokenSymbol}`;
+                $('dPending').textContent = `${fmt(info[3])} ${tokenSymbol}`;
+                $('dSponsor').textContent = `${fmt(info[4])} ${tokenSymbol}`;
+                $('dUpline').textContent = up ? short(up) : 'None';
+                $('dUpline').title = up || '';
+                $('nUpline').textContent = up ? short(up) : 'None'; $('nUpline').title = up || '';
+                $('dLeader').textContent = leader ? 'Yes' : 'No'; $('nLeader').textContent = leader ? 'Yes' : 'No';
+                const pct = info[1] > 0n ? Number(info[2] * 10000n / info[1]) / 100 : 0;
+                $('capProgress').style.width = Math.min(100, pct) + '%'; $('capText').textContent = `${pct.toFixed(2)}% of max cap reached`;
+                $('allowanceText').textContent = `Allowance: ${fmt(allow)} ${tokenSymbol}`;
+            }
+            function livePending() {
+                if (!account || cached.total === 0n || cached.cap <= cached.claimed) return;
+                try {
+                    const now = BigInt(Math.floor(Date.now() / 1000));
+                    if (cached.lastClaim <= 0n || now <= cached.lastClaim) return;
+                    const elapsed = now - cached.lastClaim;
+                    const daily = (cached.total * cached.dailyBps) / 10000n;
+                    let extra = (daily * elapsed) / 86400n;
+                    let p = cached.pending + extra;
+                    const remaining = cached.cap - cached.claimed;
+                    if (p > remaining) p = remaining;
+                    $('dPending').textContent = `≈ ${fmt(p)} ${tokenSymbol}`;
+                    $('pending').textContent = `≈ ${fmt(p)} ${tokenSymbol}`;
+                } catch { }
+            }
+            async function approve() {
+                if (!requireContract()) return;
+                if (!await requireWallet()) return;
+                try {
+                    const amount = parseAmount($('stakeAmount').value);
+                    if (amount <= 0n) throw Error('Enter a staking amount.');
+                    const tx = await token.approve(CONFIG.stakingContract, amount); await waitTx(tx, 'Approval'); await refresh();
+                } catch (e) { toast(cleanError(e), 'error'); }
+            }
+            async function stake() {
+                if (!requireContract()) return;
+                if (!await requireWallet()) return;
+                try {
+                    const amount = parseAmount($('stakeAmount').value);
+                    if (amount <= 0n) throw Error('Enter a staking amount.');
+                    const min = await gt.minStake(); if (amount < min) throw Error(`Amount is below minimum stake: ${fmt(min)} ${tokenSymbol}`);
+                    let up = ($('upline').value || '').trim();
+                    if (up && !validAddress(up)) throw Error('Invalid upline address.');
+                    if (up && up.toLowerCase() === account.toLowerCase()) throw Error('Upline cannot be your own address.');
+                    const allowance = await token.allowance(account, CONFIG.stakingContract);
+                    if (allowance < amount) { toast('Allowance is insufficient. Approve the amount first.', 'error'); return; }
+                    const tx = await gt.stake(amount, up || ethers.ZeroAddress); await waitTx(tx, 'Stake'); await refresh();
+                } catch (e) { toast(cleanError(e), 'error'); }
+            }
+            async function maxAmount() {
+                if (!await requireWallet()) return;
+                try { $('stakeAmount').value = ethers.formatUnits(await token.balanceOf(account), tokenDecimals) } catch (e) { toast(cleanError(e), 'error'); }
+            }
+            async function claimRoi() {
+                if (!requireContract()) return; if (!await requireWallet()) return; try { const tx = await gt.claimRoi(); await waitTx(tx, 'ROI claim'); await refresh() } catch (e) { toast(cleanError(e), 'error') }
+            }
+            async function claimSponsor() {
+                if (!requireContract()) return; if (!await requireWallet()) return; try { const tx = await gt.claimSponsorBonus(); await waitTx(tx, 'Sponsor bonus claim'); await refresh() } catch (e) { toast(cleanError(e), 'error') }
+            }
+            async function copyReferral() {
+                if (!account) { toast('Connect your wallet first.', 'error'); return }
+                const url = new URL(location.href); url.searchParams.set('ref', account);
+                await navigator.clipboard.writeText(url.toString()); toast('Referral link copied.', 'ok');
+            }
+            async function requireWallet() {
+                if (!window.ethereum) { toast('Connect an EVM wallet first.', 'error'); return false }
+                if (!account) { await connect(); }
+                if (!account) return false;
+                if (!gt) await bindWallet();
+                return !!gt;
+            }
+            function buildLevelInputs() {
+                const box = $('levelInputs'); box.innerHTML = '';
+                const top = $('levels'); top.innerHTML = '';
+                for (let i = 1; i <= 15; i++) {
+                    const d = document.createElement('div'); d.innerHTML = `<label class="label">Level ${i} (BPS)</label><input id="lvl${i}" inputmode="numeric" placeholder="0">`; box.appendChild(d);
+                }
+            }
+            function renderLevels(levels) {
+                $('levels').innerHTML = levels.map((b, i) => `<div class="kv"><span>Level ${i + 1}</span><span>${fmtBps(BigInt(b))}</span></div>`).join('');
+                levels.forEach((b, i) => { const el = $(`lvl${i + 1}`); if (el && !el.matches(':focus')) el.value = String(b) });
+            }
+            function fillOwner(levels, min, roi, lb) {
+                $('oMinStake').value = ethers.formatUnits(min, tokenDecimals);
+                $('oRoi').value = String(roi); $('oLeaderBps').value = String(lb);
+                levels.forEach((b, i) => { const el = $(`lvl${i + 1}`); if (el && !el.matches(':focus')) el.value = String(b) });
+            }
+            async function updateMinStake() {
+                if (!requireContract()) return;
+                if (!await requireOwner()) return;
+                try { const v = parseAmount($('oMinStake').value); const tx = await gt.updateMinStake(v); await waitTx(tx, 'Minimum stake update'); await refresh() } catch (e) { toast(cleanError(e), 'error') }
+            }
+            async function updateRoi() {
+                if (!requireContract()) return;
+                if (!await requireOwner()) return;
+                try { const v = BigInt($('oRoi').value); if (v <= 0n) throw Error('ROI must be greater than zero.'); const tx = await gt.updateDailyRoiBps(v); await waitTx(tx, 'Daily ROI update'); await refresh() } catch (e) { toast(cleanError(e), 'error') }
+            }
+            async function updateLeaderBps() {
+                if (!requireContract()) return;
+                if (!await requireOwner()) return;
+                try { const v = BigInt($('oLeaderBps').value); const tx = await gt.updateLeaderBonusBps(v); await waitTx(tx, 'Leader bonus update'); await refresh() } catch (e) { toast(cleanError(e), 'error') }
+            }
+            async function setLeader() {
+                if (!requireContract()) return;
+                if (!await requireOwner()) return;
+                try { const a = $('leaderAddress').value.trim(); if (!validAddress(a)) throw Error('Invalid leader address.'); const s = $('leaderStatus').value === 'true'; const tx = await gt.setLeader(a, s); await waitTx(tx, 'Leader status update'); await refresh() } catch (e) { toast(cleanError(e), 'error') }
+            }
+            async function setLevels() {
+                if (!requireContract()) return;
+                if (!await requireOwner()) return;
+                try {
+                    const arr = []; for (let i = 1; i <= 15; i++) { const v = BigInt($(`lvl${i}`).value || '0'); if (v < 0n) throw Error('Invalid BPS'); arr.push(v); }
+                    const tx = await gt.updateSponsorLevels(arr); await waitTx(tx, 'Sponsor levels update'); await refresh();
+                } catch (e) { toast(cleanError(e), 'error') }
+            }
+            async function adminStake() {
+                if (!requireContract()) return;
+                if (!await requireOwner()) return;
+                try {
+                    const u = $('adminUser').value.trim(), up = $('adminUpline').value.trim() || ethers.ZeroAddress;
+                    if (!validAddress(u) || (up !== ethers.ZeroAddress && !validAddress(up))) throw Error('Invalid address.');
+                    const a = parseAmount($('adminAmount').value); if (a <= 0n) throw Error('Amount must be greater than zero.');
+                    const tx = await gt.adminStake(u, a, up); await waitTx(tx, 'Admin stake'); await refresh();
+                } catch (e) { toast(cleanError(e), 'error') }
+            }
+            async function recoverERC20() {
+                if (!requireContract()) return;
+                if (!await requireOwner()) return;
+                try {
+                    const a = $('recoverToken').value.trim(); if (!validAddress(a)) throw Error('Invalid token address.');
+                    const c = new ethers.Contract(a, ERC20_ABI, signer); const d = Number(await c.decimals()); const amount = ethers.parseUnits($('recoverAmount').value.trim(), d);
+                    if (!confirm('Confirm ERC-20 recovery to the contract owner?')) return;
+                    const tx = await gt.recoverERC20(a, amount); await waitTx(tx, 'ERC-20 recovery');
+                } catch (e) { toast(cleanError(e), 'error') }
+            }
+            async function requireOwner() {
+                if (!await requireWallet()) return false;
+                const o = await gt.owner(); if (o.toLowerCase() !== account.toLowerCase()) { toast('Connected wallet is not the contract owner.', 'error'); return false } return true;
+            }
+            function showTab(name) {
+                document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === name));
+                document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+                window.scrollTo({ top: document.querySelector('.tabs').offsetTop - 90, behavior: 'smooth' });
+            }
+            function cleanError(e) {
+                if (!e) return 'Unknown error';
+                if (e.code === 'ACTION_REJECTED' || e?.info?.error?.code === 4001) return 'Transaction rejected in wallet.';
+                const msg = e.shortMessage || e.reason || e.message || String(e);
+                if (/insufficient funds/i.test(msg)) return 'Insufficient RIC for gas or token balance.';
+                if (/user rejected/i.test(msg)) return 'Transaction rejected in wallet.';
+                return msg.replace(/^execution reverted: /i, '').slice(0, 280);
+            }
+            const ref = new URLSearchParams(location.search).get('ref');
+            if (ref && validAddress(ref)) $('upline').value = ref;
+            init();
+        })();
+    </script>
+</body>
+
+</html>
